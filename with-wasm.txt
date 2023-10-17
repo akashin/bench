@@ -1,0 +1,3 @@
+Elapsed: 4.381768292s
+Estimated Pi: 3.141534352
+Elapsed: 13.702631166s
