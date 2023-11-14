@@ -1,36 +1,47 @@
 # Cranelift bench
-In this repo I want to measure performance difference between code compiled via
-Rust ->         Cranelift IR -> aarch64 VS
-Rust -> Wasm -> Cranelift IR -> aarch64
+In this repo I want to measure performance difference between code compiled via:
+- Rust ->         Cranelift IR -> aarch64 VS
+- Rust -> Wasm -> Cranelift IR -> aarch64
 
 # Method:
 Firstly, setup two compilation ways:
 
 ## Compilation
 
-### Without wasm step
-using https://github.com/bjorn3/rustc_codegen_cranelift compiler
+### Using `rustc_codegen_cranelift`
 
-Firstly, you should download and unpack compiler from here https://github.com/bjorn3/rustc_codegen_cranelift/releases/tag/dev
+```sh
+# Download and unpack compiler from here https://github.com/bjorn3/rustc_codegen_cranelift/releases/tag/dev
+wget https://github.com/rust-lang/rustc_codegen_cranelift/releases/download/dev/cg_clif-x86_64-apple-darwin.tar.xz
+tar -xf cg_clif-x86_64-apple-darwin.tar.xz
 
-If path to ``dist`` dir you downloaded is ``../../Downloads`` you can just run ``./test.sh`` to compile both ways and run benchmarks (will take time)
+# If you downloaded the compiler to `../../Downloads` you can just run `./test.sh` to compile both ways and run benchmarks (will take time).
 
-Compile rust:
-``sudo <path-to-dist-dir-you downloaded>/dist/cargo-clif b --release``
+# Compile the project with rustc_codegen_cranelift
+dist/cargo-clif b --release
 
-Run benchmark
-``./target/release/cranelift-bench >no-wasm.txt``
+# Run benchmark
+./target/release/cranelift-bench >no-wasm.txt
+```
 
-### With wasm step
-Init cargo for compiling to wasm:
-``rustup target add wasm32-wasi``
-Compile rust to wasm:
-``sudo cargo build --target wasm32-wasi --release``
-Precompile wasm via cranelift:
-``wasmtime compile target/wasm32-wasi/release/cranelift-bench.wasm -o compiled-wasm``
-Run precompiled wasm:
-``wasmtime compiled-wasm --allow-precompiled >with-wasm.txt``
+### Using Rustc WASM target
 
+```sh
+# Init cargo for compiling to wasm
+rustup target add wasm32-wasi
+
+# Compile Rust to wasm
+cargo build --target wasm32-wasi --release
+
+# Install wasmtime
+brew install wasmtime
+
+# Precompile wasm via cranelift
+wasmtime compile target/wasm32-wasi/release/cranelift-bench.wasm -o compiled-wasm
+
+# Run precompiled wasm:
+wasmtime compiled-wasm --allow-precompiled >with-wasm.txt
+```
 
 ## Used benchmarks
 Currently matrix multiplication and monte-carlo pi calculation only. I think with such results it is enought.
