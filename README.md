@@ -53,7 +53,6 @@ wasmtime compiled-wasm --allow-precompiled > results/wasm_cranelift.txt
 | monte-carlo-pi        | 8.9s  | 562.8s          | 13.7s          |
 | matrix-multiplication | 4.7s  | 16.3s           | 4.7s           |
 
-
 ## Intel i7-6700K CPU
 |                       | rustc | rustc_cranelift | wasm_cranelift |
 |-----------------------|-------|-----------------|----------------|
