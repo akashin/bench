@@ -3,31 +3,30 @@
 
 use panic_halt as _;
 
-use sha2::{Sha256, Digest};
+use sha2::{Digest, Sha256};
 
 extern "C" {
-    fn assert_eq(actual: i64, expected: i64);
+    fn assert_eq_i64(actual: u64, expected: u64);
 }
+// fn assert_eq_i64(actual: u64, expected: u64) {
+//     assert_eq!(actual, expected);
+// }
 
-fn subslice_to_i64(slice: &[u8], begin: usize, end: usize) -> i64 {
-    let mut result = 0i64;
-    for i in begin..end {
-        result <<= 8;
-        result += slice[i] as i64;
+fn assert_eq_array(expected: &[u8], actual: &[u8]) {
+    for i in 0..32 {
+        unsafe {
+            assert_eq_i64(expected[i] as u64, actual[i] as u64);
+        }
     }
-    result
 }
 
 #[no_mangle]
 pub fn main() {
-    let mut hasher = Sha256::new();
-    hasher.update(b"hello world");
-    let result = hasher.finalize();
+    let hash = Sha256::digest(b"X");
+    let expected = [
+        75, 104, 171, 56, 71, 254, 218, 125, 108, 98, 193, 251, 203, 238, 191, 163, 94, 171, 115,
+        81, 237, 94, 120, 244, 221, 173, 234, 93, 246, 75, 128, 21,
+    ];
 
-    unsafe {
-        assert_eq(subslice_to_i64(&result, 0, 8), 1);
-        assert_eq(subslice_to_i64(&result, 8, 16), 2);
-        assert_eq(subslice_to_i64(&result, 16, 24), 3);
-        assert_eq(subslice_to_i64(&result, 24, 32), 4);
-    }
+    assert_eq_array(&expected, &hash)
 }
